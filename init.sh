@@ -13,5 +13,9 @@ echo "Provide your PAT..."
 read PAT
 # As of now, --recurse-submodules does not work. It will try to clone via SSH and at this point, no SSH keys are available. TODO find if there
 # is another way around this.
-git -C $HOME clone --no-checkout --separate-git-dir=$HOME/.tracker https://$PAT@github.com/hernaneg350/home.git
-git -C $HOME --git-dir=.tracker --work-tree=. reset --hard HEAD #CAREFUL!
+git -C $HOME init --separate-git-dir=.tracker
+alias home="git -C $HOME --git-dir=.tracker --work-tree=."
+home remote add origin https://$PAT@github.com/hernaneg350/home.git
+home fetch origin
+home checkout origin/master
+home remote set-url origin git@github.com:hernaneg350/home.git
