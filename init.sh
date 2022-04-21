@@ -11,6 +11,8 @@
 
 echo "Provide your PAT..."
 read PAT
-git -C $HOME clone --recurse-submodules --separate-git-dir=$HOME/.tracker https://$PAT@github.com/hernaneg350/home.git
+# As of now, --recurse-submodules does not work. It will try to clone via SSH and at this point, no SSH keys are available. TODO find if there
+# is another way around this.
+git -C $HOME clone --separate-git-dir=$HOME/.tracker https://$PAT@github.com/hernaneg350/home.git $HOME/.
 
 
