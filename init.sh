@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Executed in sub-shell since passing in the script to bash using pipes (i.e. curl https://rawgithub... | bash) will mess up input redirection.
 (xcode-select -p > /dev/null 2>&1)
 
 if [[ $0 > 0 ]] ; then
