@@ -17,5 +17,5 @@ git -C $HOME init --separate-git-dir=.tracker
 alias home="git -C $HOME --git-dir=.tracker --work-tree=."
 home remote add origin https://$PAT@github.com/hernaneg350/home.git
 home fetch origin
-home checkout origin/master
+home checkout -f origin/master
 home remote set-url origin git@github.com:hernaneg350/home.git
