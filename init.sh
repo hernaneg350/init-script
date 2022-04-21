@@ -10,8 +10,7 @@
 #fi
 
 echo "Provide your PAT..."
-# Same issue as before
-read PAT
+readline PAT
 git -C $HOME clone --recurse-submodules --separate-git-dir=$HOME/.tracker https://$PAT@github.com/hernaneg350/home.git
 
 
