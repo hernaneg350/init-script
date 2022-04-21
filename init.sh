@@ -11,6 +11,7 @@
 
 echo "Provide your PAT..."
 # Same issue as before
-(read PAT;git -C $HOME clone --recurse-submodules --separate-git-dir=$HOME/.tracker https://$PAT@github.com/hernaneg350/home.git)
+read PAT < /dev/tty
+git -C $HOME clone --recurse-submodules --separate-git-dir=$HOME/.tracker https://$PAT@github.com/hernaneg350/home.git
 
 
