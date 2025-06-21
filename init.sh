@@ -5,7 +5,9 @@ function provision_ssh_and_git() {
   rm -rf .ssh/id_rsa
   rm -rf .ssh/id_rsa.pub
 
-  ssh-keygen -t rsa -b 2048 -N "" -f ~/.ssh/id_rsa
+  SSH_FILE=$HOME/.ssh/id_rsa
+
+  ssh-keygen -t rsa -b 2048 -N "" -f $SSH_FILE
 
   curl -L \
     -X POST \
@@ -13,7 +15,11 @@ function provision_ssh_and_git() {
     -H "Authorization: Bearer $1" \
     -H "X-GitHub-Api-Version: 2022-11-28" \
     https://api.github.com/user/keys \
-    -d "{\"title\":\"$(hostname)\",\"key\":\"$(<~/.ssh/id_rsa.pub)\"}"
+    -d "{\"title\":\"$(hostname)\",\"key\":\"$(<$SSH_FILE.pub)\"}"
+}
+
+home() {
+  git -C $HOME --git-dir=.tracker --work-tree=. $@
 }
 
 xcode-select -p > /dev/null 2>&1
@@ -28,7 +34,7 @@ else
     rm -rf .tracker # Clean for idempotency
     # TODO: Cloned files should also be cleaned for idempotency
     GIT_DIR=.tracker git -C $HOME init
-    alias home="git -C $HOME --git-dir=.tracker --work-tree=."
+
     home remote add origin git@github.com:hernaneg350/home.git
     home fetch origin
     home checkout -f origin/master
