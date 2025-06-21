@@ -1,5 +1,21 @@
 #!/bin/bash
 
+function provision_ssh_and_git() {
+  # Clean for idempotency
+  rm -rf .ssh/id_rsa
+  rm -rf .ssh/id_rsa.pub
+
+  ssh-keygen -t rsa -b 2048 -N "" -f ~/.ssh/id_rsa
+
+  curl -L \
+    -X POST \
+    -H "Accept: application/vnd.github+json" \
+    -H "Authorization: Bearer $1" \
+    -H "X-GitHub-Api-Version: 2022-11-28" \
+    https://api.github.com/user/keys \
+    -d "{\"title\":\"$(hostname)\",\"key\":\"$(<~/.ssh/id_rsa.pub)\"}"
+}
+
 xcode-select -p > /dev/null 2>&1
 
 if [[ $? > 0 ]] ; then
@@ -8,10 +24,12 @@ if [[ $? > 0 ]] ; then
 else
     echo "Provide your PAT..."
     read PAT
+    provision_ssh_and_git $PAT
     rm -rf .tracker # Clean for idempotency
+    # TODO: Cloned files should also be cleaned for idempotency
     GIT_DIR=.tracker git -C $HOME init
     alias home="git -C $HOME --git-dir=.tracker --work-tree=."
-    home remote add origin https://$PAT@github.com/hernaneg350/home.git
+    home remote add origin git@github.com:hernaneg350/home.git
     home fetch origin
     home checkout -f origin/master
     home remote set-url origin git@github.com:hernaneg350/home.git
