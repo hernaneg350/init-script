@@ -39,4 +39,5 @@ else
     home fetch origin
     home checkout -f origin/master
     home remote set-url origin git@github.com:hernaneg350/home.git
+    home submodule update --init --recursive
 fi
