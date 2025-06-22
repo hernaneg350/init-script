@@ -33,11 +33,10 @@ else
     provision_ssh_and_git $PAT
     rm -rf .tracker # Clean for idempotency
     # TODO: Cloned files should also be cleaned for idempotency
-    GIT_DIR=.tracker git -C $HOME init
 
     home remote add origin git@github.com:hernaneg350/home.git
     home fetch origin
-    home checkout -f origin/master
+    home checkout -f master
     home remote set-url origin git@github.com:hernaneg350/home.git
     home submodule update --init --recursive
 fi
