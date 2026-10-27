@@ -50,13 +50,41 @@ function provision_ssh_and_git() {
 
   ssh-keygen -t rsa -b 2048 -N "" -f "$SSH_FILE"
 
-  curl -L \
+  local response http_status body
+
+  response="$(curl -sS \
     -X POST \
     -H "Accept: application/vnd.github+json" \
     -H "Authorization: Bearer $1" \
     -H "X-GitHub-Api-Version: 2022-11-28" \
+    -w '\n%{http_code}' \
     https://api.github.com/user/keys \
-    -d "{\"title\":\"$(hostname)\",\"key\":\"$(<$SSH_FILE.pub)\"}"
+    -d "{\"title\":\"$(hostname)\",\"key\":\"$(<$SSH_FILE.pub)\"}")" || return 1
+
+  http_status="${response##*$'\n'}"
+  body="${response%$'\n'*}"
+
+  case "$http_status" in
+    201)
+      echo "SSH key registered on GitHub."
+      ;;
+    401)
+      echo "GitHub rejected the token (401): it is wrong, expired or revoked."
+      return 1
+      ;;
+    403|404)
+      # GitHub can answer 404 (not only 403) for a token that can't manage keys.
+      echo "GitHub answered $http_status: $body"
+      echo "The token is probably missing permission to manage SSH keys:"
+      echo "  - classic token: the 'write:public_key' scope"
+      echo "  - fine-grained token: Account permissions > 'Git SSH keys' > Read and write"
+      return 1
+      ;;
+    *)
+      echo "GitHub answered $http_status: $body"
+      return 1
+      ;;
+  esac
 }
 
 home() {
@@ -101,7 +129,7 @@ function select_preset() {
 install_prerequisites && {
     echo "Provide your PAT..."
     read PAT
-    provision_ssh_and_git $PAT
+    provision_ssh_and_git $PAT || return 1
     rm -rf "$HOME/.tracker" # Clean for idempotency
     # TODO: Cloned files should also be cleaned for idempotency
     GIT_DIR=.tracker git -C $HOME init
