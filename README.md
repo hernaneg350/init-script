@@ -4,6 +4,15 @@ This script is a convenience script to automatically provision [hernaneg350/home
 
 Simply call it from a terminal with `source <(curl https://raw.githubusercontent.com/hernaneg350/init-script/refs/heads/main/init.sh)` and follow the steps.
 
+It works on macOS and on Ubuntu. On a clean device it:
+
+ 1. installs what it needs to clone (the Command Line Tools on macOS, `git`, `curl` and `openssh-client` through apt on Ubuntu),
+ 2. asks for a GitHub PAT, creates an SSH key and registers it on your account,
+ 3. clones `home`, and
+ 4. asks which **preset** this machine is. It lists the presets defined in `home`'s `presets.toml`, and writes your answer to `~/.config/home/preset`, which `home`'s `install.sh` requires.
+
+After that, call `~/install.sh`.
+
 You can also call the `develop` branch with latest changes in order to try them out and validate them. Just know that some things might need fixing, and _you are expected to push the 
 changes to `main` once you are done fixing and have validated that the script works on a virgin install._
 
