@@ -42,13 +42,13 @@ function install_prerequisites() {
 }
 
 function provision_ssh_and_git() {
-  SSH_FILE=$HOME/.ssh/id_rsa
+  SSH_FILE=$HOME/.ssh/id_ed25519
 
   # Clean for idempotency
   rm -rf "$SSH_FILE" "$SSH_FILE.pub"
   mkdir -p "$HOME/.ssh"
 
-  ssh-keygen -t rsa -b 2048 -N "" -f "$SSH_FILE"
+  ssh-keygen -t ed25519 -N "" -f "$SSH_FILE"
 
   local response http_status body
 
